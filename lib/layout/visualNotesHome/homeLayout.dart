@@ -1,94 +1,56 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:visual_notes_app/layout/visualNotesHome/cubit/app_cubit.dart';
+import 'package:visual_notes_app/layout/visualNotesHome/cubit/login_cubit_states.dart';
 import 'package:visual_notes_app/models/visualNotesData/data.dart';
 import 'package:visual_notes_app/shared/components/components.dart';
 import 'package:visual_notes_app/shared/styles/colors.dart';
 
-class HomeLayout extends StatefulWidget {
-  @override
-  State<HomeLayout> createState() => _HomeLayoutState();
-}
-
-class _HomeLayoutState extends State<HomeLayout> {
-
-  var titleController = TextEditingController();
-  var descriptionController = TextEditingController();
-  String status;
-  List<String> selectStatus = ['opened' , 'closed'];
-  List<Data> data = [
-    Data(
-        title: "title 1",
-        image:
-            'https://res-5.cloudinary.com/dwpujv6in/image/upload/c_lpad,dpr_2.0,f_auto,h_560,q_auto:eco,w_700/v1/media/catalog/product/h/o/ho1_dnchwl_st_frontlow-host-dining-chair-tait-stone-walnut_1.jpg',
-        description: 'description 1',
-        date: '6/1/2022',
-        time: '10:02 PM',
-        status: 'closed'),
-    Data(
-        title: "title 1",
-        image:
-        'https://res-5.cloudinary.com/dwpujv6in/image/upload/c_lpad,dpr_2.0,f_auto,h_560,q_auto:eco,w_700/v1/media/catalog/product/h/o/ho1_dnchwl_st_frontlow-host-dining-chair-tait-stone-walnut_1.jpg',
-        description: 'description 1',
-        date: '6/1/2022',
-        time: '10:02 PM',
-        status: 'closed'),
-    Data(
-        title: "title 1",
-        image:
-        'https://res-5.cloudinary.com/dwpujv6in/image/upload/c_lpad,dpr_2.0,f_auto,h_560,q_auto:eco,w_700/v1/media/catalog/product/h/o/ho1_dnchwl_st_frontlow-host-dining-chair-tait-stone-walnut_1.jpg',
-        description: 'description 1',
-        date: '6/1/2022',
-        time: '10:02 PM',
-        status: 'closed'),
-    Data(
-        title: "title 1",
-        image:
-        'https://res-5.cloudinary.com/dwpujv6in/image/upload/c_lpad,dpr_2.0,f_auto,h_560,q_auto:eco,w_700/v1/media/catalog/product/h/o/ho1_dnchwl_st_frontlow-host-dining-chair-tait-stone-walnut_1.jpg',
-        description: 'description 1',
-        date: '6/1/2022',
-        time: '10:02 PM',
-        status: 'closed'),
-    Data(
-        title: "title 1",
-        image:
-        'https://res-5.cloudinary.com/dwpujv6in/image/upload/c_lpad,dpr_2.0,f_auto,h_560,q_auto:eco,w_700/v1/media/catalog/product/h/o/ho1_dnchwl_st_frontlow-host-dining-chair-tait-stone-walnut_1.jpg',
-        description: 'description 1',
-        date: '6/1/2022',
-        time: '10:02 PM',
-        status: 'closed'),
-  ];
+class HomeLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: defaultAppBar(
-        context: context,
-        title: "Home",
-        actions: [
+    var cubit = AppCubit.get(context);
+    return BlocConsumer<AppCubit,AppCubitStates>(
+      listener: (context, state) {
+      },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: defaultAppBar(
+              context: context,
+              title: "Home",
+              actions: [
+                OutlinedButton(onPressed: () {
+                  buildAlertDialog(context: context);
+                },
+                  child: Text(
+                    "Add New Visual Note", style: TextStyle(color: colorApp,),),
+                )
 
-          OutlinedButton(onPressed: (){buildAlertDialog(context: context);},
-              child:  Text("Add New Visual Note" , style: TextStyle(color: HexColor('bdc920'),),),
-          )
-
-        ],
-      ),
-      body: ListView.separated(
-        physics: const BouncingScrollPhysics(),
-        itemBuilder: (context, index) {
-          return buildItem(context, index);
+              ],
+            ),
+            body: ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              itemBuilder: (context, index) {
+                return buildItem(context, index);
+              },
+              separatorBuilder: (context, index) => SizedBox(
+                height: 1,
+              ),
+              itemCount: cubit.data.length,
+            ),
+          );
         },
-        separatorBuilder: (context, index) => const SizedBox(
-          height: 1,
-        ),
-        itemCount: data.length,
-      ),
-    );
+    ) ;
   }
 
   Future<void> buildAlertDialog({
     @required BuildContext context,
   }) {
-    final AlertDialog alert = AlertDialog(
+    var cubit = AppCubit.get(context);
+    AlertDialog alert = AlertDialog(
+      scrollable: true,
       content: Container(
         height: 340,
         padding: const EdgeInsets.all(10),
@@ -96,61 +58,77 @@ class _HomeLayoutState extends State<HomeLayout> {
         child: Column(
           children: [
             Row(
-              children:  [
+              children: [
                 const Text('Upload Image : '),
                 const Spacer(),
-                Icon(Icons.camera_alt_rounded , color: HexColor('bdc920') ,),
+                IconButton(icon: Icon(Icons.camera_alt_rounded), color: colorApp,onPressed: () {
+                  cubit.PickImage(context);
+                },),
               ],
             ),
-            const SizedBox(
+             const SizedBox(
               height: 10,
             ),
-            Divider(color: HexColor('bdc920'),),
-            const SizedBox(
+            Divider(color: colorApp,),
+             const SizedBox(
               height: 20,
             ),
             sharedTextFormField(
-              controller: titleController,
+              controller: cubit.titleController,
               text: 'Enter Title',
               type: TextInputType.text,
             ),
-            const SizedBox(
+             const SizedBox(
               height: 10,
             ),
             sharedTextFormField(
-                controller: descriptionController,
+                controller: cubit.descriptionController,
                 text: 'Enter Description',
                 type: TextInputType.text),
 
-            const SizedBox(
+             const SizedBox(
               height: 10,
             ),
 
-            SizedBox(
-              width: double.infinity,
-              child: DropdownButton(
-                value: status,
-                hint: const Text("Select Status"),
-                items: selectStatus.map((e) {
-                  return DropdownMenuItem(
-                    child: Text(e),
-                    value: e,
-                  );
-                }).toList(),
+            DropdownButton(
+              value: cubit.status.isNotEmpty ? cubit.status : null,
+              isExpanded: true,
+              hint: const Text("Select Status"),
+              items: cubit.selectStatus.map((e) {
+                return DropdownMenuItem(
+                  value: e,
+                  child: Text(e),
+                );
+              }).toList(),
 
-                onChanged: (val){
-                  setState(() {
-                    status = val;
-                  });
-                },
-              ),
-            ),
+              onChanged: (val) {
+                 cubit.selectNoteState(val);
+                 Navigator.pop(context);
+                 buildAlertDialog(context: context);
+              },
+           ),
 
-            const SizedBox(
+          const SizedBox(
               height: 10,
             ),
 
-            OutlinedButton(onPressed: (){}, child: const Text("Add")),
+            OutlinedButton(
+             onPressed: () {
+                cubit.addNote('notes',
+                    cubit.titleController.text,
+                    Data(title: cubit.titleController.text,
+                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0mTbFlJB_0etsgJrIqycGfWXM4q9bd5Zu4g&usqp=CAU',
+                        description: cubit.descriptionController.text,
+                        date: DateTime.now().toString().split(' ').first,
+                        time: TimeOfDay.now().toString(),
+                        status: cubit.status,
+                    ).toMap(),
+                    context,
+                );
+                Navigator.pop(context);
+             },
+             child: const Text("Add")
+            ),
           ],
         ),
       ),
@@ -164,17 +142,18 @@ class _HomeLayoutState extends State<HomeLayout> {
   }
 
   Widget buildItem(BuildContext context, index) {
+    var cubit = AppCubit.get(context);
     return GestureDetector(
-      onLongPress: (){
+      onLongPress: () {
         showMenu(
           position: const RelativeRect.fromLTRB(0, 0, 0, 0),
           items: <PopupMenuEntry>[
             PopupMenuItem(
-              onTap: (){},
+              onTap: () {},
               value: index,
               child: Row(
                 children: [
-                  Icon(Icons.delete , color: HexColor('939c1f'),),
+                  Icon(Icons.delete, color: colorApp,),
                   const Text("Delete"),
                 ],
               ),
@@ -185,7 +164,7 @@ class _HomeLayoutState extends State<HomeLayout> {
       },
       child: Card(
         elevation: 20,
-        color: HexColor('939c1f'),
+        color: colorApp,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: SizedBox(
@@ -194,16 +173,19 @@ class _HomeLayoutState extends State<HomeLayout> {
               physics: const BouncingScrollPhysics(),
               scrollDirection: Axis.horizontal,
               child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                 Text(
-                  data[index].title,
-                  style: Theme.of(context).textTheme.bodyText2,
+                  cubit.data[index].title,
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .bodyText2,
                 ),
                 const SizedBox(
                   width: 30,
                 ),
                 Image(
-                  image: NetworkImage(data[index].image),
+                  image: NetworkImage(cubit.data[index].image),
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
@@ -215,8 +197,11 @@ class _HomeLayoutState extends State<HomeLayout> {
                   child: SizedBox(
                     width: 100,
                     child: Text(
-                      data[index].description,
-                      style: Theme.of(context).textTheme.bodyText2,
+                      cubit.data[index].description,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .bodyText2,
                     ),
                   ),
                 ),
@@ -227,8 +212,11 @@ class _HomeLayoutState extends State<HomeLayout> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      data[index].date,
-                      style: Theme.of(context).textTheme.bodyText2,
+                      cubit.data[index].date,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .bodyText2,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -236,8 +224,11 @@ class _HomeLayoutState extends State<HomeLayout> {
                       height: 20,
                     ),
                     Text(
-                      data[index].time,
-                      style: Theme.of(context).textTheme.bodyText2,
+                      cubit.data[index].time,
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .bodyText2,
                     ),
                   ],
                 ),
@@ -245,8 +236,11 @@ class _HomeLayoutState extends State<HomeLayout> {
                   width: 30,
                 ),
                 Text(
-                  data[index].status,
-                  style: Theme.of(context).textTheme.bodyText2,
+                  cubit.data[index].status,
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .bodyText2,
                 ),
               ]),
             ),
@@ -256,3 +250,4 @@ class _HomeLayoutState extends State<HomeLayout> {
     );
   }
 }
+

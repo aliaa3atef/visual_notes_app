@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
-import 'package:visual_notes_app/shared/network/local/cashedHelper.dart';
 import 'package:visual_notes_app/shared/styles/colors.dart';
 
 Widget sharedTextButton({
@@ -103,10 +102,6 @@ navigateAndReplace({
    Toast.show(msg, context, backgroundColor: bg, duration: Toast.LENGTH_LONG,);
 }
 
-void signOut(context , screen) {
-  CashedHelper.removeData(key: 'token').then((value) {
-    if (value) navigateAndReplace(context: context, screen: screen);
-  });
-}
+
 
 

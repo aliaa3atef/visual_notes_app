@@ -1,3 +1,4 @@
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 
-Color colorApp = Colors.green;
+Color colorApp = Color(HexColor('bdc920').value);
