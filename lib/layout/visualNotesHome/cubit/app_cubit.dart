@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,6 +24,7 @@ class AppCubit extends Cubit<AppCubitStates> {
     titleController.text='';
     descriptionController.text='';
     status='';
+    imageUrl='';
   }
   void selectNoteState(val)
   {
@@ -33,10 +34,13 @@ class AppCubit extends Cubit<AppCubitStates> {
 
   XFile selectedFile;
   File imageFile;
-  String imageUrl;
+  String imageUrl='';
 
   void PickImage(context) async
   {
+    selectedFile=null;
+    imageFile=null;
+    imageUrl='';
           selectedFile =await ImagePicker().pickImage(source: ImageSource.camera,imageQuality: 20);
           if(selectedFile!=null) {
       imageFile = File(selectedFile.path);
@@ -45,16 +49,24 @@ class AppCubit extends Cubit<AppCubitStates> {
             showToast('something went wrong', Colors.red, context);
   }
 
+  bool CheckDataReady()
+  {
+    return imageUrl.isNotEmpty&&titleController.text.isNotEmpty&&descriptionController.text.isNotEmpty&&status.isNotEmpty;
+  }
+
   void UploadImage(imageFile,context){
-    FirebaseStorage.instance
+    emit(AppCubitUploadingImageState());
+    firebase_storage.FirebaseStorage.instance
         .ref()
+        .child('images/'+DateTime.now().toString())
         .putFile(imageFile)
         .then((val) {
            val.ref.getDownloadURL().then((value){
              imageUrl=value;
              emit(AppCubitUploadImageSuccessState());
            }).catchError((onError){
-             showToast('something went wrong', Colors.red, context);
+             print(onError.toString());
+             showToast(onError.toString(), Colors.red, context);
            });
     });
   }
@@ -86,6 +98,18 @@ class AppCubit extends Cubit<AppCubitStates> {
           if(data.length==event.docs.length) {
         emit(AppCubitGetNotesSuccessState());
       }
+    });
+  }
+
+  void deleteNote(title,index,context)
+  {
+    FirebaseFirestore.instance
+        .collection('notes')
+        .doc(title)
+        .delete()
+        .whenComplete(() {
+          showToast('deleted', Colors.green, context);
+          emit(AppCubitDeleteNoteSuccessState());
     });
   }
 }

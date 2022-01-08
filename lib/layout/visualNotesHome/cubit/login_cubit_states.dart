@@ -10,3 +10,7 @@ class AppCubitGetNotesSuccessState extends AppCubitStates {}
 
 class AppCubitUploadImageSuccessState extends AppCubitStates {}
 
+class AppCubitDeleteNoteSuccessState extends AppCubitStates {}
+
+class AppCubitUploadingImageState extends AppCubitStates {}
+

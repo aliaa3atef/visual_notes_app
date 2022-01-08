@@ -22,7 +22,7 @@ class HomeLayout extends StatelessWidget {
               title: "Home",
               actions: [
                 OutlinedButton(onPressed: () {
-                  buildAlertDialog(context: context);
+                  buildAlertDialog(context: context,state: state);
                 },
                   child: Text(
                     "Add New Visual Note", style: TextStyle(color: colorApp,),),
@@ -35,7 +35,7 @@ class HomeLayout extends StatelessWidget {
               itemBuilder: (context, index) {
                 return buildItem(context, index);
               },
-              separatorBuilder: (context, index) => SizedBox(
+              separatorBuilder: (context, index) => const SizedBox(
                 height: 1,
               ),
               itemCount: cubit.data.length,
@@ -47,12 +47,13 @@ class HomeLayout extends StatelessWidget {
 
   Future<void> buildAlertDialog({
     @required BuildContext context,
+    state
   }) {
     var cubit = AppCubit.get(context);
     AlertDialog alert = AlertDialog(
       scrollable: true,
       content: Container(
-        height: 340,
+        height: 360,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
         child: Column(
@@ -61,9 +62,14 @@ class HomeLayout extends StatelessWidget {
               children: [
                 const Text('Upload Image : '),
                 const Spacer(),
-                IconButton(icon: Icon(Icons.camera_alt_rounded), color: colorApp,onPressed: () {
-                  cubit.PickImage(context);
-                },),
+                Stack(
+                  children: [
+                    IconButton(icon: const Icon(Icons.camera_alt_rounded), color: colorApp,onPressed: () {
+                      cubit.PickImage(context);
+                    },
+                    ),
+                  ],
+                ),
               ],
             ),
              const SizedBox(
@@ -114,18 +120,27 @@ class HomeLayout extends StatelessWidget {
 
             OutlinedButton(
              onPressed: () {
-                cubit.addNote('notes',
-                    cubit.titleController.text,
-                    Data(title: cubit.titleController.text,
-                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0mTbFlJB_0etsgJrIqycGfWXM4q9bd5Zu4g&usqp=CAU',
+                if(cubit.CheckDataReady())
+                  {
+                    cubit.addNote(
+                      'notes',
+                      cubit.titleController.text,
+                      Data(
+                        title: cubit.titleController.text,
+                        image: cubit.imageUrl,
                         description: cubit.descriptionController.text,
                         date: DateTime.now().toString().split(' ').first,
-                        time: TimeOfDay.now().toString(),
+                        time: TimeOfDay.now().format(context).toString(),
                         status: cubit.status,
-                    ).toMap(),
-                    context,
-                );
-                Navigator.pop(context);
+                      ).toMap(),
+                      context,
+                    );
+                    Navigator.pop(context);
+                  }else
+                    {
+                      showToast('data not ready', Colors.red, context);
+                    }
+
              },
              child: const Text("Add")
             ),
@@ -149,7 +164,9 @@ class HomeLayout extends StatelessWidget {
           position: const RelativeRect.fromLTRB(0, 0, 0, 0),
           items: <PopupMenuEntry>[
             PopupMenuItem(
-              onTap: () {},
+              onTap: () {
+                cubit.deleteNote(cubit.data[index].title, index, context);
+              },
               value: index,
               child: Row(
                 children: [
