@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
-import 'package:visual_notes_app/shared/network/local/cashedHelper.dart';
 import 'package:visual_notes_app/shared/styles/colors.dart';
 
 Widget sharedTextButton({
@@ -39,7 +38,6 @@ Widget sharedMaterialButton({
 Widget sharedTextFormField({
   bool isPassword = false,
   @required TextEditingController controller,
-  IconData prefixIcon,
   @required String text,
   Function validate,
   @required TextInputType type,
@@ -54,10 +52,6 @@ Widget sharedTextFormField({
       obscureText: isPassword,
       controller: controller,
       decoration: InputDecoration(
-        prefixIcon: Icon(
-          prefixIcon,
-          color: colorApp,
-        ),
         suffixIcon: suffixIcon != null ? IconButton(
           icon: Icon(suffixIcon , color: colorApp,), onPressed: suffixPressed,): null,
         labelText: text,
@@ -103,10 +97,6 @@ navigateAndReplace({
    Toast.show(msg, context, backgroundColor: bg, duration: Toast.LENGTH_LONG,);
 }
 
-void signOut(context , screen) {
-  CashedHelper.removeData(key: 'token').then((value) {
-    if (value) navigateAndReplace(context: context, screen: screen);
-  });
-}
+
 
 

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "64102796215",
+    "project_id": "visual-notes-app",
+    "storage_bucket": "visual-notes-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64102796215:android:af2fc0ce1a7cf395cdf632",
+        "android_client_info": {
+          "package_name": "com.example.visual_notes_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "64102796215-kmh6nr7b9v62slbiqc6piuf50gdgosl3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtt4fgl1flKpxmAX02jAdi-yj9aXXpGg8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "64102796215-kmh6nr7b9v62slbiqc6piuf50gdgosl3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
