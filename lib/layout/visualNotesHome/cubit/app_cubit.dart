@@ -8,10 +8,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:visual_notes_app/layout/visualNotesHome/cubit/login_cubit_states.dart';
 import 'package:visual_notes_app/models/visualNotesData/data.dart';
 import 'package:visual_notes_app/shared/components/components.dart';
+import 'package:visual_notes_app/shared/styles/colors.dart';
+
 class AppCubit extends Cubit<AppCubitStates> {
   AppCubit() : super(AppCubitInitState());
 
   static AppCubit get(context) => BlocProvider.of(context);
+
+  var formKey = GlobalKey<FormState>();
 
   var titleController = TextEditingController();
   var descriptionController = TextEditingController();
@@ -19,97 +23,109 @@ class AppCubit extends Cubit<AppCubitStates> {
   List<String> selectStatus = ['opened', 'closed'];
   List<Data> data = [];
 
-  void restNoteData()
-  {
-    titleController.text='';
-    descriptionController.text='';
-    status='';
-    imageUrl='';
+
+  void restNoteData() {
+    titleController.text = '';
+    descriptionController.text = '';
+    status = '';
+    imageUrl = '';
   }
-  void selectNoteState(val)
-  {
+
+  void selectNoteState(val) {
     status = val;
     emit(AppCubitSelectNoteState());
   }
 
   XFile selectedFile;
   File imageFile;
-  String imageUrl='';
+  String imageUrl = '';
 
-  void PickImage(context) async
-  {
-    selectedFile=null;
-    imageFile=null;
-    imageUrl='';
-          selectedFile =await ImagePicker().pickImage(source: ImageSource.camera,imageQuality: 20);
-          if(selectedFile!=null) {
+  void PickImage(context) async {
+    selectedFile = null;
+    imageFile = null;
+    imageUrl = '';
+    selectedFile = await ImagePicker()
+        .pickImage(source: ImageSource.camera, imageQuality: 20);
+    if (selectedFile != null) {
       imageFile = File(selectedFile.path);
-      UploadImage(imageFile,context);
-    } else
-            showToast('something went wrong', Colors.red, context);
+      UploadImage(imageFile, context);
+    } else {
+      showToast('something went wrong', Colors.red, context);
+    }
   }
 
-  bool CheckDataReady()
-  {
-    return imageUrl.isNotEmpty&&titleController.text.isNotEmpty&&descriptionController.text.isNotEmpty&&status.isNotEmpty;
+  bool CheckDataReady() {
+    return imageUrl.isNotEmpty &&
+        status.isNotEmpty;
   }
 
-  void UploadImage(imageFile,context){
+  void UploadImage(imageFile, context) {
     emit(AppCubitUploadingImageState());
     firebase_storage.FirebaseStorage.instance
         .ref()
-        .child('images/'+DateTime.now().toString())
+        .child('images/' + DateTime.now().toString())
         .putFile(imageFile)
         .then((val) {
-           val.ref.getDownloadURL().then((value){
-             imageUrl=value;
-             emit(AppCubitUploadImageSuccessState());
-           }).catchError((onError){
-             print(onError.toString());
-             showToast(onError.toString(), Colors.red, context);
-           });
+      val.ref.getDownloadURL().then((value) {
+        imageUrl = value;
+        emit(AppCubitUploadImageSuccessState());
+      }).catchError((onError) {
+        print(onError.toString());
+        showToast(onError.toString(), Colors.red, context);
+      });
     });
   }
 
-   void addNote(String collectionName,String docName,Map<String,dynamic>data,context)
-  {
+  void addNote(String collectionName, String docName, Map<String, dynamic> data,
+      context) {
     FirebaseFirestore.instance
         .collection(collectionName)
         .doc(docName)
         .set(data)
         .whenComplete(() {
-      showToast('done', Colors.blue, context);
-      restNoteData();
+      showToast('Visual Note Added Successfully', colorApp, context);
+      //restNoteData();
       emit(AppCubitAddNoteSuccessState());
     });
   }
 
-  void getNotes(String collectionName)
-  {
+  void getNotes(String collectionName) {
     FirebaseFirestore.instance
         .collection(collectionName)
         .snapshots()
         .listen((event) {
-          data=[];
-          event.docs.forEach((element) {
-            data.add(Data.fromJson(element.data()));
-          });
+      data = [];
+      event.docs.forEach((element) {
+        data.add(Data.fromJson(element.data()));
+      });
 
-          if(data.length==event.docs.length) {
+      if (data.length == event.docs.length) {
         emit(AppCubitGetNotesSuccessState());
       }
     });
   }
 
-  void deleteNote(title,index,context)
-  {
+  void deleteNote(title, index, context) {
     FirebaseFirestore.instance
         .collection('notes')
         .doc(title)
         .delete()
         .whenComplete(() {
-          showToast('deleted', Colors.green, context);
-          emit(AppCubitDeleteNoteSuccessState());
+      showToast('Deleted Successfully', colorApp , context);
+      emit(AppCubitDeleteNoteSuccessState());
+    });
+  }
+
+
+  void updateNote(String collectionName, String docName, Map<String, dynamic> data,
+      context){
+
+    FirebaseFirestore.instance
+        .collection(collectionName)
+        .doc(docName)
+        .update(data)
+        .whenComplete((){
+      emit(AppCubitUpdateNoteSuccessState());
     });
   }
 }

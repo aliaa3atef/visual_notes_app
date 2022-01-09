@@ -8,14 +8,13 @@ import 'package:visual_notes_app/layout/visualNotesHome/homeLayout.dart';
 import 'package:visual_notes_app/shared/blocobcerver.dart';
 import 'package:visual_notes_app/shared/styles/colors.dart';
 
-void main()async {
-
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   Bloc.observer = MyBlocObserver();
+
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({Key key}) : super(key: key);
@@ -50,8 +49,7 @@ class MyApp extends StatelessWidget {
             actionsIconTheme: IconThemeData(color: colorApp),
             iconTheme: const IconThemeData(color: Colors.white),
             titleTextStyle: const TextStyle(color: Colors.white, fontSize: 25),
-            backwardsCompatibility: false,
-            systemOverlayStyle:  SystemUiOverlayStyle(
+            systemOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: HexColor('33312b'),
               statusBarIconBrightness: Brightness.light,
             ),
@@ -65,9 +63,8 @@ class MyApp extends StatelessWidget {
           ),
         ),
         themeMode: ThemeMode.dark,
-        home:  HomeLayout(),
+        home: HomeLayout(),
       ),
     );
   }
 }
-

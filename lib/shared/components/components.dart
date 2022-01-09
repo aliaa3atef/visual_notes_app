@@ -38,7 +38,6 @@ Widget sharedMaterialButton({
 Widget sharedTextFormField({
   bool isPassword = false,
   @required TextEditingController controller,
-  IconData prefixIcon,
   @required String text,
   Function validate,
   @required TextInputType type,
@@ -53,10 +52,6 @@ Widget sharedTextFormField({
       obscureText: isPassword,
       controller: controller,
       decoration: InputDecoration(
-        prefixIcon: Icon(
-          prefixIcon,
-          color: colorApp,
-        ),
         suffixIcon: suffixIcon != null ? IconButton(
           icon: Icon(suffixIcon , color: colorApp,), onPressed: suffixPressed,): null,
         labelText: text,
