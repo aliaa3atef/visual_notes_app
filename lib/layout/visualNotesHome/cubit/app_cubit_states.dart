@@ -16,6 +16,9 @@ class AppCubitDeleteNoteSuccessState extends AppCubitStates {}
 
 class AppCubitUploadingImageState extends AppCubitStates {}
 
+class AppCubitGetLastIdState extends AppCubitStates {}
+
+
 class AppCubitUpdateNoteSuccessState extends AppCubitStates {}
 
 class AppCubitUpdateNoteErrorState extends AppCubitStates {

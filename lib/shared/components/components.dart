@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
 import 'package:visual_notes_app/shared/styles/colors.dart';
@@ -52,8 +53,15 @@ Widget sharedTextFormField({
       obscureText: isPassword,
       controller: controller,
       decoration: InputDecoration(
-        suffixIcon: suffixIcon != null ? IconButton(
-          icon: Icon(suffixIcon , color: colorApp,), onPressed: suffixPressed,): null,
+        suffixIcon: suffixIcon != null
+            ? IconButton(
+                icon: Icon(
+                  suffixIcon,
+                  color: colorApp,
+                ),
+                onPressed: suffixPressed,
+              )
+            : null,
         labelText: text,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
@@ -64,21 +72,20 @@ Widget sharedTextFormField({
     );
 
 Widget defaultAppBar({
-  @required context ,
-  String  title,
+  @required context,
+  String title,
   List<Widget> actions,
-})
-{
+}) {
   return AppBar(
     title: Text(title),
     actions: actions,
     //titleSpacing: 5,
   );
 }
+
 navigateTo({
   @required context,
   @required screen,
-
 }) {
   return Navigator.push(
       context, MaterialPageRoute(builder: (context) => screen));
@@ -88,15 +95,35 @@ navigateAndReplace({
   @required context,
   @required screen,
 }) {
-  return Navigator.pushAndRemoveUntil(
-      context, MaterialPageRoute(builder: (context) => screen), (
-      route) => false);
+  return Navigator.pushAndRemoveUntil(context,
+      MaterialPageRoute(builder: (context) => screen), (route) => false);
 }
 
- showToast(String msg, Color bg, context) {
-   Toast.show(msg, context, backgroundColor: bg, duration: Toast.LENGTH_LONG,);
+showToast(String msg, Color bg, context) {
+  Toast.show(
+    msg,
+    context,
+    backgroundColor: bg,
+    duration: Toast.LENGTH_LONG,
+  );
 }
 
+Future<bool> checkInternet() {
+  return Connectivity().checkConnectivity().then((ConnectivityResult value) {
+    return  value != ConnectivityResult.none;
+  });
+}
 
-
-
+  void  showSnackBar(context) {
+   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+     backgroundColor: Colors.red,
+    content: Row(
+      children:  const [
+        Icon(Icons.info_outline,),
+        SizedBox(width: 10.0,),
+        Text('No Internet Connection')
+      ],
+    ),
+  ),
+   );
+}

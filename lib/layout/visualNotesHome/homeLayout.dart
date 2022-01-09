@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:visual_notes_app/layout/visualNotesHome/cubit/app_cubit.dart';
-import 'package:visual_notes_app/layout/visualNotesHome/cubit/login_cubit_states.dart';
+import 'package:visual_notes_app/layout/visualNotesHome/cubit/app_cubit_states.dart';
 import 'package:visual_notes_app/modules/addNote/addNoteScreen.dart';
 import 'package:visual_notes_app/modules/editNote/editNoteScreen.dart';
 import 'package:visual_notes_app/shared/components/components.dart';
@@ -65,12 +65,12 @@ class HomeLayout extends StatelessWidget {
         FocusedMenuItem(
           backgroundColor: Colors.black26,
           title: Text("Delete" ,style: Theme.of(context).textTheme.subtitle1),
-          onPressed: () {cubit.deleteNote(cubit.data[index].title, index, context);},
+          onPressed: () {cubit.deleteNote(cubit.data[index].id, index, context);},
           trailingIcon: const Icon(Icons.delete ),
         )
       ],
       onPressed: () {},
-    openWithTap: true,
+      openWithTap: true,
       child: Card(
         elevation: 20,
         color: colorApp,
@@ -94,14 +94,27 @@ class HomeLayout extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: Text(
-                        cubit.data[index].title,
-                        style: Theme.of(context).textTheme.bodyText2,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              cubit.data[index].title,
+                              style: Theme.of(context).textTheme.bodyText2,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            flex: 2,
+                          ),
+                          Expanded(
+                            flex: 1,
+                              child:Text('ID : '+cubit.data[index].id.toString(),
+                            style: Theme.of(context).textTheme.bodyText2,
+                          )),
+                        ],
                       ),
                       flex: 3,
                     ),
+
                     Expanded(
                       flex: 3,
                       child: Text(
@@ -110,7 +123,7 @@ class HomeLayout extends StatelessWidget {
                             .textTheme
                             .caption
                             .copyWith(color: Colors.grey[300]),
-                        maxLines: 3,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
